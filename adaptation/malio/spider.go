@@ -74,6 +74,9 @@ func ObtainUserInfo(hOption *net.HTTPOptions, domain string) (*adaptation.Person
 	userinfo.Name = BracketExtraction(resBody, "user:nickname")
 	userinfo.Level = atoi(BracketExtraction(resBody, "Class"))
 	userinfo.Balance = BracketExtraction(resBody, "Money")
+
+	hOption.URL = fmt.Sprintf("%s/user",domain)
+	resBody = hOption.GET()
 	userinfo.RemainFlow = BracketExtraction(resBody, "Unused_Traffic")
 	userinfo.MaxBandwidth = MaxBandwidth(resBody)
 	userinfo.TodayUsed = TodayUsed(resBody)
