@@ -3,6 +3,7 @@ package main
 import (
 	"airflow/adaptation/malio"
 	"airflow/net"
+	"airflow/prome"
 	"flag"
 	"fmt"
 	"log"
@@ -18,7 +19,7 @@ var (
 
 func main() {
 	flag.Parse()
-	fmt.Println(*domain, *username, *password, *mode, *proxy)
+	go prome.StartPromeServ()
 	switch *mode {
 	case "malio":
 		hOption := net.New()
