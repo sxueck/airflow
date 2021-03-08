@@ -8,7 +8,7 @@ type PersonalInfo struct {
 	TodayUsed    string
 	OnlineDevice int
 	Balance      string
-	Level        int
+	Level        string
 }
 
 func PassMetrics() {

@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	"strconv"
 	"strings"
 )
 
@@ -35,9 +34,8 @@ func BracketExtraction(content, column string) string {
 func Login(hOption *net.HTTPOptions, domain string, username, password string) {
 	hOption.URL = fmt.Sprintf("%s/auth/login", domain)
 	hOption.ContentType = "application/x-www-form-urlencoded; charset=UTF-8"
-
-	checkLoginSuccess := hOption.POST(fmt.Sprintf("email=%s&passwd=%s&code=", username, password))
-	fmt.Println(checkLoginSuccess)
+	res := hOption.POST(fmt.Sprintf("email=%s&passwd=%s&code=", username, password))
+	fmt.Println(res)
 
 	if err := hOption.Err; err != nil {
 		fmt.Println(err)
@@ -56,23 +54,18 @@ func ObtainUserInfo(hOption *net.HTTPOptions, domain string) (*adaptation.Person
 		return nil, hOption.Err
 	}
 
+	fmt.Printf("%+v\n",hOption)
+
 	hOption.URL = fmt.Sprintf("%s/user/profile", domain)
 	resBody := hOption.GET()
 	if err := hOption.Err; err != nil {
 		return nil, err
 	}
 
-	atoi := func(str string) int {
-		iType, err := strconv.Atoi(str)
-		if err != nil {
-			panic(err)
-		}
-		return iType
-	}
-
+	// fmt.Println(resBody)
 	userinfo := &adaptation.PersonalInfo{}
 	userinfo.Name = BracketExtraction(resBody, "user:nickname")
-	userinfo.Level = atoi(BracketExtraction(resBody, "Class"))
+	userinfo.Level = BracketExtraction(resBody, "Class")
 	userinfo.Balance = BracketExtraction(resBody, "Money")
 
 	hOption.URL = fmt.Sprintf("%s/user",domain)
@@ -83,5 +76,6 @@ func ObtainUserInfo(hOption *net.HTTPOptions, domain string) (*adaptation.Person
 	userinfo.OnlineDevice = OnlineDevice(resBody)
 	userinfo.RemainTime = RemainTime(resBody)
 
+	log.Println(userinfo)
 	return userinfo, nil
 }

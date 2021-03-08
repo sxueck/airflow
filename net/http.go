@@ -55,6 +55,7 @@ func (h *HTTPOptions) GET() string {
 }
 
 func (h *HTTPOptions) POST(body string) string {
+	log.Printf("POST %s to %s", body, h.URL)
 	req, _ := http.NewRequest(http.MethodPost, h.URL, bytes.NewBufferString(body))
 	if h.Cookie != nil {
 		for _, c := range h.Cookie {
