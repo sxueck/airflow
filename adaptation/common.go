@@ -10,3 +10,7 @@ type PersonalInfo struct {
 	Balance      string
 	Level        int
 }
+
+func PassMetrics() {
+
+}
