@@ -72,10 +72,12 @@ func (h *HTTPOptions) do(r *http.Request) string {
 	client := &http.Client{}
 
 	if h.ProxyURL != "" {
-		proxy := func(r *http.Request) (*url.URL, error) {
-			return url.Parse(r.URL.String())
+		proxy, err := url.Parse(h.ProxyURL)
+		if err != nil {
+			log.Fatal(err)
 		}
-		client.Transport = &http.Transport{Proxy: proxy}
+
+		client.Transport = &http.Transport{Proxy: http.ProxyURL(proxy)}
 	}
 
 	h.body, h.Err = client.Do(r)

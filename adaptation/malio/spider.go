@@ -34,8 +34,7 @@ func BracketExtraction(content, column string) string {
 func Login(hOption *net.HTTPOptions, domain string, username, password string) {
 	hOption.URL = fmt.Sprintf("%s/auth/login", domain)
 	hOption.ContentType = "application/x-www-form-urlencoded; charset=UTF-8"
-	res := hOption.POST(fmt.Sprintf("email=%s&passwd=%s&code=", username, password))
-	fmt.Println(res)
+	hOption.POST(fmt.Sprintf("email=%s&passwd=%s&code=", username, password))
 
 	if err := hOption.Err; err != nil {
 		fmt.Println(err)

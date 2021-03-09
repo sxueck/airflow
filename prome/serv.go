@@ -10,6 +10,17 @@ import (
 )
 
 func init() {
+	//var (
+	//	PromeUserInfo = NewGauge(GaugeOpts{
+	//		Name: "user_info",
+	//		Help: "some fixed user information",
+	//		ConstLabels: map[string]string{
+	//			"name":  <-ChanName,
+	//			"level": <-ChanLevel,
+	//		},
+	//	})
+	//)
+
 	// Metrics have to be registered to be exposed
 	log.Println("init metrics")
 	_ = Register(PromeBalance)
@@ -18,7 +29,7 @@ func init() {
 	_ = Register(PromeRemainFlow)
 	_ = Register(PromeRemainTime)
 	_ = Register(PromeTodayUsed)
-	_ = Register(PromeUserInfo)
+	// _ = Register(PromeUserInfo)
 }
 
 func StartPromeServ() {
@@ -42,7 +53,6 @@ func RecvMetricsValue(ctx context.Context) {
 			PromeTodayUsed.Set(float64(v))
 		case v := <-ChanRemainTime:
 			PromeRemainTime.Set(float64(v))
-
 		}
 	}
 }
