@@ -39,9 +39,9 @@ var (
 	})
 
 	ChanBalance           = make(chan float32, 1)
-	ChanMaxBandwidth      = make(chan int, 1)
+	ChanMaxBandwidth      = make(chan float32, 1)
 	ChanOnlineDeviceCount = make(chan int, 1)
-	ChanRemainFlow        = make(chan int, 1)
+	ChanRemainFlow        = make(chan float32, 1)
 	ChanRemainTime        = make(chan int, 1)
 	ChanTodayUsed         = make(chan float32, 1)
 )

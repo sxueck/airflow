@@ -53,6 +53,14 @@ func RecvMetricsValue(ctx context.Context) {
 			PromeTodayUsed.Set(float64(v))
 		case v := <-ChanRemainTime:
 			PromeRemainTime.Set(float64(v))
+		case v := <-ChanMaxBandwidth:
+			PromeMaxBandwidth.Set(float64(v))
+		case v := <-ChanOnlineDeviceCount:
+			PromeOnlineDeviceCount.Set(float64(v))
+		case v := <-ChanRemainFlow:
+			PromeRemainFlow.Set(float64(v))
+		case v := <-ChanBalance:
+			PromeBalance.Set(float64(v))
 		}
 	}
 }

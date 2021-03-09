@@ -21,12 +21,13 @@ type PersonalInfo struct {
 func PassMetrics(info *PersonalInfo) error {
 	var errChan = make(chan error)
 
-	atoi := func(s string) float32 { // unified output => MB
+	atof := func(s string) float32 { // unified output => MB
 		var gb float32 = 1
 		if strings.ToLower(s[len(s)-2:]) == "gb" {
 			gb = 1024
 		}
-		reg, _ := regexp.Compile("^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*$")
+
+		reg, _ := regexp.Compile("^[1-9]\\d*\\.\\d*|0\\.\\d*[1-9]\\d*|[1-9]\\d*|0$")
 		s = reg.FindString(s)
 		var (
 			iv  float64
@@ -35,6 +36,8 @@ func PassMetrics(info *PersonalInfo) error {
 		if iv, err = strconv.ParseFloat(s, 32); err != nil {
 			panic(err)
 		}
+
+		// log.Printf("%s -> %f\n", s, iv)
 		return gb * float32(iv)
 	}
 
@@ -47,7 +50,12 @@ func PassMetrics(info *PersonalInfo) error {
 			}
 		}()
 
-		prome.ChanTodayUsed <- atoi(info.TodayUsed)
+		prome.ChanTodayUsed <- atof(info.TodayUsed)
+		prome.ChanMaxBandwidth <- atof(info.MaxBandwidth)
+		prome.ChanBalance <- atof(info.Balance)
+		prome.ChanOnlineDeviceCount <- info.OnlineDevice
+		prome.ChanRemainFlow <- atof(info.RemainFlow)
+		prome.ChanRemainTime <- info.RemainTime
 	}()
 
 	return <-errChan
