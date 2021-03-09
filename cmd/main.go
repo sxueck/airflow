@@ -1,8 +1,10 @@
 package main
 
 import (
+	"airflow/adaptation"
 	"airflow/adaptation/malio"
 	"airflow/net"
+	"airflow/prome"
 	"context"
 	"flag"
 	"fmt"
@@ -24,7 +26,7 @@ var (
 
 func main() {
 	flag.Parse()
-	//go prome.StartPromeServ()
+	go prome.StartPromeServ()
 
 	handlerMutex := &sync.Mutex{}
 	hOption := &net.HTTPOptions{}
@@ -40,7 +42,7 @@ func main() {
 				hOption = net.New()
 				hOption.ProxyURL = *proxy
 
-				for i := 0; i >= 3; i++ {
+				for i := 0; i <= 3; i++ {
 					malio.Login(hOption, *domain, *username, *password)
 
 					// login error
@@ -56,7 +58,7 @@ func main() {
 				log.Println("polling again...")
 				for {
 					select {
-					case <-time.NewTicker(5 * time.Second).C:
+					case <-time.NewTicker(5 * time.Hour).C:
 						break
 					case <-ctx.Done():
 						return
@@ -70,13 +72,16 @@ func main() {
 				select {
 				case <-ctx.Done():
 					return
-				case <-time.NewTicker(4 * time.Second).C:
+				case <-time.NewTicker(40 * time.Second).C:
 					handlerMutex.Lock()
 
 					if userinfo, err := malio.ObtainUserInfo(hOption, *domain); err != nil {
 						log.Println(err)
 					} else {
-						fmt.Printf("%+v\n", userinfo)
+						err = adaptation.PassMetrics(userinfo)
+						if err != nil {
+							log.Println(err)
+						}
 					}
 					handlerMutex.Unlock()
 				}
