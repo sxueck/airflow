@@ -5,11 +5,6 @@ import (
 )
 
 var (
-	ChanName  = make(chan string, 1)
-	ChanLevel = make(chan string, 1)
-)
-
-var (
 	PromeRemainTime = prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: "remain_time",
 		Help: "the remaining time on the next settlement day",

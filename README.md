@@ -23,3 +23,6 @@
 metrics 指标显示  
 
 ![](images/prometheus.png)
+
+Grafana 展示  
+![](images/grafana.png)

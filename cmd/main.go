@@ -26,12 +26,12 @@ var (
 
 func main() {
 	flag.Parse()
-	go prome.StartPromeServ()
 
 	handlerMutex := &sync.Mutex{}
 	hOption := &net.HTTPOptions{}
 	ctx, cancel := context.WithCancel(context.Background())
 	sigComplete := make(chan struct{})
+	var lockPromeServer = false
 
 	switch *mode {
 	case "malio":
@@ -82,6 +82,12 @@ func main() {
 						if err != nil {
 							log.Println(err)
 						}
+
+						if !lockPromeServer {
+							lockPromeServer = !lockPromeServer
+							go prome.StartPromeServ(ctx, userinfo.Name, userinfo.Level)
+						}
+
 					}
 					handlerMutex.Unlock()
 				}

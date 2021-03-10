@@ -2,24 +2,24 @@ package prome
 
 import (
 	"context"
+	"fmt"
 	. "github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"log"
 	"net/http"
-	"time"
 )
 
-func init() {
-	//var (
-	//	PromeUserInfo = NewGauge(GaugeOpts{
-	//		Name: "user_info",
-	//		Help: "some fixed user information",
-	//		ConstLabels: map[string]string{
-	//			"name":  <-ChanName,
-	//			"level": <-ChanLevel,
-	//		},
-	//	})
-	//)
+func RegisterMetrics(name, level string) {
+	var (
+		PromeUserInfo = NewGauge(GaugeOpts{
+			Name: "user_info",
+			Help: "some fixed user information",
+			ConstLabels: map[string]string{
+				"name":  name,
+				"level": level,
+			},
+		})
+	)
 
 	// Metrics have to be registered to be exposed
 	log.Println("init metrics")
@@ -29,18 +29,22 @@ func init() {
 	_ = Register(PromeRemainFlow)
 	_ = Register(PromeRemainTime)
 	_ = Register(PromeTodayUsed)
-	// _ = Register(PromeUserInfo)
+	_ = Register(PromeUserInfo)
 }
 
-func StartPromeServ() {
-	ctx, cancel := context.WithCancel(context.Background())
-	http.Handle("/metrics", promhttp.Handler())
+func StartPromeServ(ctx context.Context, name, level string) {
+	fmt.Println("starting server")
+	RegisterMetrics(name, level)
+	var errChan = make(chan error)
 	go RecvMetricsValue(ctx)
-	if err := http.ListenAndServe(":8080", nil); err != nil {
-		log.Println(err)
+
+	http.Handle("/metrics", promhttp.Handler())
+	select {
+	case errChan <- http.ListenAndServe(":8080", nil):
+		log.Fatal(errChan)
+	case <-ctx.Done():
 	}
-	cancel()
-	time.Sleep(2 * time.Second)
+	return
 }
 
 func RecvMetricsValue(ctx context.Context) {
