@@ -93,6 +93,22 @@ func main() {
 				}
 			}
 		}(ctx)
+
+		go func(ctx context.Context) {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.NewTicker(24 * time.Hour).C:
+					handlerMutex.Lock()
+					hOption.URL = "https://socloud.fun/user/checkin"
+					res := hOption.POST("")
+					fmt.Println(res)
+					handlerMutex.Unlock()
+				}
+			}
+		}(ctx)
+
 	default:
 		fmt.Println("please enter the correct matching pattern")
 	}
