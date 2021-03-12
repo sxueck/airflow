@@ -53,7 +53,7 @@ func ObtainUserInfo(hOption *net.HTTPOptions, domain string) (*adaptation.Person
 		return nil, hOption.Err
 	}
 
-	fmt.Printf("%+v\n",hOption)
+	fmt.Printf("%+v\n", hOption)
 
 	hOption.URL = fmt.Sprintf("%s/user/profile", domain)
 	resBody := hOption.GET()
@@ -67,7 +67,7 @@ func ObtainUserInfo(hOption *net.HTTPOptions, domain string) (*adaptation.Person
 	userinfo.Level = BracketExtraction(resBody, "Class")
 	userinfo.Balance = BracketExtraction(resBody, "Money")
 
-	hOption.URL = fmt.Sprintf("%s/user",domain)
+	hOption.URL = fmt.Sprintf("%s/user", domain)
 	resBody = hOption.GET()
 	userinfo.RemainFlow = BracketExtraction(resBody, "Unused_Traffic")
 	userinfo.MaxBandwidth = MaxBandwidth(resBody)
@@ -77,4 +77,11 @@ func ObtainUserInfo(hOption *net.HTTPOptions, domain string) (*adaptation.Person
 
 	log.Println(userinfo)
 	return userinfo, nil
+}
+
+func CheckIn(hOption *net.HTTPOptions, domain string) error {
+	hOption.URL = fmt.Sprintf("%s/user/checkin", domain)
+	res := hOption.POST("")
+	fmt.Println(res)
+	return hOption.Err
 }

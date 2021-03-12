@@ -101,9 +101,10 @@ func main() {
 					return
 				case <-time.NewTicker(24 * time.Hour).C:
 					handlerMutex.Lock()
-					hOption.URL = "https://socloud.fun/user/checkin"
-					res := hOption.POST("")
-					fmt.Println(res)
+					err := malio.CheckIn(hOption,*domain)
+					if err != nil {
+						log.Println(err)
+					}
 					handlerMutex.Unlock()
 				}
 			}
