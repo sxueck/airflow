@@ -23,7 +23,7 @@ func PassMetrics(info *PersonalInfo) error {
 
 	atof := func(s string) float32 { // unified output => MB
 		var gb float32 = 1
-		if len(s) >= 2 || strings.ToLower(s[len(s)-2:]) == "gb" {
+		if len(s) >= 2 && strings.ToLower(s[len(s)-2:]) == "gb" {
 			gb = 1024
 		}
 
