@@ -101,7 +101,7 @@ func main() {
 					return
 				case <-time.NewTicker(24 * time.Hour).C:
 					handlerMutex.Lock()
-					err := malio.CheckIn(hOption,*domain)
+					err := malio.CheckIn(hOption, *domain)
 					if err != nil {
 						log.Println(err)
 					}
@@ -109,6 +109,8 @@ func main() {
 				}
 			}
 		}(ctx)
+
+	case "realnode":
 
 	default:
 		fmt.Println("please enter the correct matching pattern")
