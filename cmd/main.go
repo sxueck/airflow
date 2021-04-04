@@ -3,6 +3,7 @@ package main
 import (
 	"airflow/adaptation"
 	"airflow/adaptation/malio"
+	"airflow/adaptation/realnode"
 	"airflow/net"
 	"airflow/prome"
 	"context"
@@ -111,6 +112,31 @@ func main() {
 		}(ctx)
 
 	case "realnode":
+		go func(ctx context.Context) {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case <-time.NewTicker(40 * time.Second).C:
+					handlerMutex.Lock()
+					hOption := net.New()
+					hOption.ProxyURL = *proxy
+
+					for i := 0; i >= 3; i++ {
+						realnode.Login(hOption, *domain, *username, *password)
+
+						if hOption.Err != nil {
+							break
+						}
+
+						if i >= 3 {
+							close(sigComplete)
+						}
+					}
+					handlerMutex.Unlock()
+				}
+			}
+		}(ctx)
 
 	default:
 		fmt.Println("please enter the correct matching pattern")

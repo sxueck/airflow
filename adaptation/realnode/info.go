@@ -39,7 +39,7 @@ func ObtainUserInfo(hOption *net.HTTPOptions, domain string) (*adaptation.Person
 	userinfo.Level = uiData.PlanID
 	userinfo.Balance = uiData.Balance
 	userinfo.RemainFlow = uiData.RemindExpire
-	userinfo.MaxBandwidth = string(fmt.Sprintf("%dM", uiData.TransferEnable/1024/1024/1024))
+	userinfo.MaxBandwidth = fmt.Sprintf("%dM", uiData.TransferEnable/1024/1024/1024)
 	log.Println(userinfo)
 	return userinfo, nil
 }
